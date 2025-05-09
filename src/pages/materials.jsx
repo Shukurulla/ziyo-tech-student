@@ -47,10 +47,10 @@ const Materials = () => {
     <div>
       <div className="row">
         {materials.map((item) => (
-          <div
+          <a
             key={item._id}
             className="col-lg-4 mb-5 col-md-4 col-sm-6 col-12"
-            onClick={() => handleMaterialClick(item)}
+            href={item.fileUrl}
             style={{ cursor: "pointer" }}
           >
             <div className="bg-white rounded-lg overflow-hidden">
@@ -62,7 +62,7 @@ const Materials = () => {
                 <p className="text-[#8C96A1]">{item.description}</p>
               </div>
             </div>
-          </div>
+          </a>
         ))}
       </div>
     </div>
