@@ -4,7 +4,7 @@ import Register from "./pages/register";
 import Login from "./pages/login";
 import { Toaster } from "react-hot-toast";
 import Layout from "./pages/layout";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/dashboard";
 import PracticTests from "./pages/practicTests";
 import AiChat from "./pages/aiChat";
 import Materials from "./pages/materials";
