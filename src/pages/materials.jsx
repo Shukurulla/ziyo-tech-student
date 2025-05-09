@@ -52,6 +52,8 @@ const Materials = () => {
             className="col-lg-4 mb-5 col-md-4 col-sm-6 col-12"
             href={item.fileUrl}
             style={{ cursor: "pointer" }}
+            target="_blank"
+            download
           >
             <div className="bg-white rounded-lg overflow-hidden">
               <div className="thumbnail">
