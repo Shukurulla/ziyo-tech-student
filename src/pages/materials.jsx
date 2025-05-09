@@ -25,21 +25,6 @@ const Materials = () => {
     fetchMaterials();
   }, []);
 
-  const handleMaterialClick = (material) => {
-    if (material.content === "file") {
-      // Trigger file download
-      const link = document.createElement("a");
-      link.href = material.fileUrl;
-      link.download = material.fileUrl.split("/").pop(); // Extract filename from URL
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } else if (material.content === "link") {
-      // Redirect to the URL
-      window.open(material.fileUrl, "_blank", "noopener,noreferrer");
-    }
-  };
-
   if (loading) return <p className="text-center mt-10">Yuklanmoqda...</p>;
   if (error) return <p className="text-red-500 text-center mt-10">{error}</p>;
 
@@ -52,7 +37,6 @@ const Materials = () => {
             className="col-lg-4 mb-5 col-md-4 col-sm-6 col-12"
             href={item.fileUrl}
             style={{ cursor: "pointer" }}
-            target="_blank"
             download
           >
             <div className="bg-white rounded-lg overflow-hidden">
