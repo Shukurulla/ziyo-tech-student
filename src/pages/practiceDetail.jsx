@@ -14,6 +14,7 @@ const PracticeTest = () => {
   const [completed, setCompleted] = useState(false);
   const [work, setWork] = useState(null);
   const [file, setFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchPractice = async () => {
@@ -46,6 +47,7 @@ const PracticeTest = () => {
   };
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     if (!file) return;
 
     try {
@@ -68,6 +70,7 @@ const PracticeTest = () => {
     } catch (err) {
       setError("Yuklashda xatolik: " + err.message);
     }
+    setIsLoading(false);
   };
 
   const handleDownloadTemplate = () => {
@@ -172,8 +175,9 @@ const PracticeTest = () => {
                     variant="contained"
                     color="primary"
                     onClick={handleSubmit}
+                    disabled={isLoading}
                   >
-                    Yuklash
+                    {isLoading ? "Yuklanmoqda..." : "Yuklash"}
                   </Button>
                 </div>
               )}
