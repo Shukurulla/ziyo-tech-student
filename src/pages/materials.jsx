@@ -36,7 +36,8 @@ const Materials = () => {
           <a
             key={item._id}
             className="col-lg-4 mb-5 col-md-4 col-sm-6 col-12"
-            onClick={() => convertToHttps(item.fileUrl)}
+            href={() => convertToHttps(item.fileUrl)}
+            download
             style={{ cursor: "pointer" }}
           >
             <div className="bg-white rounded-lg overflow-hidden">

@@ -127,8 +127,10 @@ const VideoDetail = () => {
                   {Object.entries(video.presentations).map(([name, url]) => (
                     <Button
                       key={name}
+                      href={convertToHttps(url)}
                       onClick={() => convertToHttps(url)}
                       variant="outlined"
+                      download
                       startIcon={<FaDownload />}
                     >
                       {name}
