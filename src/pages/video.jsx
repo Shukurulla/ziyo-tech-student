@@ -5,6 +5,7 @@ import { Card, CardContent, Typography, Button } from "@mui/material";
 import { FaDownload } from "react-icons/fa";
 import { FiCheck, FiChevronLeft, FiClock, FiLock } from "react-icons/fi";
 import FileUploader from "../components/fileUploader";
+import { convertToHttps } from "../utils";
 
 const VideoDetail = () => {
   const { id } = useParams();
@@ -126,8 +127,7 @@ const VideoDetail = () => {
                   {Object.entries(video.presentations).map(([name, url]) => (
                     <Button
                       key={name}
-                      href={url}
-                      target="_blank"
+                      onClick={() => convertToHttps(url)}
                       variant="outlined"
                       startIcon={<FaDownload />}
                     >
@@ -151,7 +151,7 @@ const VideoDetail = () => {
                     className="flex flex-col items-start gap-1 border  rounded-full shadow w-full "
                   >
                     <audio controls className="w-full">
-                      <source src={url} type="audio/mpeg" />
+                      <source src={convertToHttps(url)} type="audio/mpeg" />
                       Brauzeringiz audio pleerni qo‘llab-quvvatlamaydi.
                     </audio>
                   </div>

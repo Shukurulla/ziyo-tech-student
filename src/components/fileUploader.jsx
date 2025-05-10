@@ -2,6 +2,7 @@ import { FiDownload, FiFile, FiPlus } from "react-icons/fi";
 import axios from "../services/api";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { convertToHttps } from "../utils";
 
 const FileUploader = ({ videoId }) => {
   const [files, setFiles] = useState([]);
@@ -130,7 +131,7 @@ const FileUploader = ({ videoId }) => {
                   <FiFile />
                   <span>{work.title}</span>
                 </div>
-                <a href={work.fileUrl} download={"Work"}>
+                <a href={convertToHttps(work.fileUrl)} download={"Work"}>
                   <FiDownload />
                 </a>
               </div>

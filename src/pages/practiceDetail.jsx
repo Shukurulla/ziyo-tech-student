@@ -4,6 +4,7 @@ import axios from "axios";
 import { Button, Card, Typography, Box, Divider, Chip } from "@mui/material";
 import { FiDownload, FiUpload, FiChevronLeft } from "react-icons/fi";
 import { saveAs } from "file-saver";
+import { convertToHttps } from "../utils";
 
 const PracticeTest = () => {
   const { testId } = useParams();
@@ -75,7 +76,7 @@ const PracticeTest = () => {
 
   const handleDownloadTemplate = () => {
     if (!practice?.fileUrl) return;
-    saveAs(practice.fileUrl, `${practice.title}.docx`);
+    saveAs(convertToHttps(practice.fileUrl), `${practice.title}.docx`);
   };
 
   if (loading) return <p className="text-center mt-10">Yuklanmoqda...</p>;
@@ -143,7 +144,9 @@ const PracticeTest = () => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => window.open(work.fileUrl, "_blank")}
+                onClick={() =>
+                  window.open(convertToHttps(work.fileUrl), "_blank")
+                }
               >
                 Ko'rish
               </Button>

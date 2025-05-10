@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { MaterialThumbnail } from "../assets";
+import { convertToHttps } from "../utils";
 
 const Materials = () => {
   const [materials, setMaterials] = useState([]);
@@ -35,9 +36,8 @@ const Materials = () => {
           <a
             key={item._id}
             className="col-lg-4 mb-5 col-md-4 col-sm-6 col-12"
-            href={item.fileUrl}
+            onClick={() => convertToHttps(item.fileUrl)}
             style={{ cursor: "pointer" }}
-            download
           >
             <div className="bg-white rounded-lg overflow-hidden">
               <div className="thumbnail">
