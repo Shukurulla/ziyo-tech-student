@@ -14,6 +14,8 @@ import TestPage from "./pages/testPage";
 import PracticeTest from "./pages/practiceDetail";
 import StudentNotifications from "./pages/notification";
 import EditProfile from "./pages/settings";
+import StudentTestSelection from "./pages/StudentTestSelection";
+import MatchingTestPage from "./pages/MatchingTestPage";
 
 const App = () => {
   const navigate = useNavigate();
@@ -74,6 +76,21 @@ const App = () => {
           path="/notification"
           element={
             <Layout active={"Xabarlar"} activePage={<StudentNotifications />} />
+          }
+        />
+        <Route
+          path="/video/:videoId/test-selection"
+          element={
+            <Layout
+              active={"Bosh Sahifa"}
+              activePage={<StudentTestSelection />}
+            />
+          }
+        />
+        <Route
+          path="/video/:videoId/matching-test"
+          element={
+            <Layout active={"Bosh Sahifa"} activePage={<MatchingTestPage />} />
           }
         />
       </Routes>

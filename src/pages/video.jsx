@@ -160,7 +160,7 @@ const VideoDetail = () => {
                 ))}
               </div>
               <Button
-                onClick={() => navigate(`/video/${id}/test`)}
+                onClick={() => navigate(`/video/${id}/test-selection`)}
                 variant="contained"
                 className="w-100 mt-3"
               >
