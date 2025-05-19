@@ -1,3 +1,4 @@
+// Updated src/pages/MatchingTestPage.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -11,6 +12,7 @@ import {
   Divider,
   Chip,
   CircularProgress,
+  Container,
 } from "@mui/material";
 import { FiChevronLeft, FiCheck, FiX } from "react-icons/fi";
 import axios from "../services/api";
@@ -81,7 +83,7 @@ const MatchingTestPage = () => {
   const handleLeftClick = (item) => {
     if (submitted) return;
     // Toggle selection if clicking the same item
-    if (selectedLeft && selectedLeft.text === item.text) {
+    if (selectedLeft?.text === item.text) {
       setSelectedLeft(null);
     } else {
       setSelectedLeft(item);
@@ -169,7 +171,7 @@ const MatchingTestPage = () => {
   if (error) {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <Button onClick={() => navigate(-1)}>
+        <Button onClick={() => navigate(-1)} className="mb-4">
           <FiChevronLeft size={25} />
         </Button>
         <Typography variant="h5" className="text-center mt-10 text-red-500">
@@ -182,7 +184,7 @@ const MatchingTestPage = () => {
   if (!test) {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <Button onClick={() => navigate(-1)}>
+        <Button onClick={() => navigate(-1)} className="mb-4">
           <FiChevronLeft size={25} />
         </Button>
         <Typography variant="h5" className="text-center mt-10 text-red-500">
@@ -193,17 +195,23 @@ const MatchingTestPage = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <Button onClick={() => navigate(-1)} className="mb-4">
-        <FiChevronLeft size={25} />
+    <Container maxWidth="lg" className="py-6">
+      <Button
+        onClick={() => navigate(-1)}
+        className="mb-6"
+        variant="outlined"
+        startIcon={<FiChevronLeft />}
+      >
+        Orqaga
       </Button>
 
-      <Typography variant="h4" className="font-bold mb-2 text-center">
+      <Typography variant="h4" className="font-bold mb-4 text-center">
         {test.questionText || "Juftlash Testi"}
       </Typography>
 
-      <Typography variant="body1" className="mb-6 text-center text-gray-600">
-        Chap ustundagi so'zlarni o'ng ustunga mos juftini tanlang
+      <Typography variant="body1" className="mb-8 text-center text-gray-600">
+        Chap ustundagi javobni tanlang, keyin unga mos keluvchi o'ng ustundagi
+        savolni tanlang
       </Typography>
 
       {/* Pairs display */}
@@ -213,7 +221,7 @@ const MatchingTestPage = () => {
             <Typography variant="h6" className="font-semibold mb-3">
               Tanlangan juftliklar
             </Typography>
-            <div className="space-y-2">
+            <div className="grid gap-2">
               {pairs.map((pair, index) => (
                 <Paper
                   key={index}
@@ -223,16 +231,16 @@ const MatchingTestPage = () => {
                       : "bg-red-50 border-red-200 border"
                   }`}
                 >
-                  <div className="flex items-center gap-4 flex-1">
+                  <div className="flex items-center gap-2 flex-1">
                     <Chip
                       label={pair.left.text}
-                      color={pair.isCorrect ? "success" : "error"}
+                      color="primary"
                       variant="outlined"
                     />
-                    <span>→</span>
+                    <span className="mx-2">→</span>
                     <Chip
                       label={pair.right.text}
-                      color={pair.isCorrect ? "success" : "error"}
+                      color="secondary"
                       variant="outlined"
                     />
                   </div>
@@ -241,8 +249,10 @@ const MatchingTestPage = () => {
                       size="small"
                       color="error"
                       onClick={() => handleRemovePair(index)}
+                      variant="outlined"
+                      startIcon={<FiX />}
                     >
-                      <FiX />
+                      O'chirish
                     </Button>
                   )}
                 </Paper>
@@ -254,13 +264,26 @@ const MatchingTestPage = () => {
 
       {/* Selection area */}
       {!submitted && (
-        <Grid container spacing={4}>
-          {/* Left column */}
-          <Grid item xs={12} md={6}>
-            <Card className="h-full">
-              <CardContent>
-                <Typography variant="h6" className="font-semibold mb-3">
-                  Chap ustun
+        <Card>
+          <CardContent>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Typography
+                  variant="h6"
+                  className="font-semibold mb-3 text-center"
+                >
+                  Savol va Javoblar
+                </Typography>
+                <Divider className="mb-4" />
+              </Grid>
+
+              {/* Matching area */}
+              <Grid item xs={6}>
+                <Typography
+                  variant="subtitle1"
+                  className="mb-3 font-semibold text-center"
+                >
+                  Javoblar
                 </Typography>
                 <div className="space-y-2">
                   {leftItems.map((item, index) => (
@@ -277,16 +300,14 @@ const MatchingTestPage = () => {
                     </Paper>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
-          </Grid>
+              </Grid>
 
-          {/* Right column */}
-          <Grid item xs={12} md={6}>
-            <Card className="h-full">
-              <CardContent>
-                <Typography variant="h6" className="font-semibold mb-3">
-                  O'ng ustun
+              <Grid item xs={6}>
+                <Typography
+                  variant="subtitle1"
+                  className="mb-3 font-semibold text-center"
+                >
+                  Savollar
                 </Typography>
                 <div className="space-y-2">
                   {rightItems.map((item, index) => (
@@ -303,10 +324,10 @@ const MatchingTestPage = () => {
                     </Paper>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
       )}
 
       {/* Actions */}
@@ -321,6 +342,7 @@ const MatchingTestPage = () => {
                 variant="contained"
                 color="primary"
                 onClick={() => navigate(`/video/${next._id}`)}
+                size="large"
               >
                 Keyingi darsga o'tish
               </Button>
@@ -333,12 +355,13 @@ const MatchingTestPage = () => {
             onClick={handleSubmit}
             disabled={leftItems.length > 0 || pairs.length === 0}
             size="large"
+            startIcon={<FiCheck />}
           >
             Tekshirish
           </Button>
         )}
       </Box>
-    </div>
+    </Container>
   );
 };
 
