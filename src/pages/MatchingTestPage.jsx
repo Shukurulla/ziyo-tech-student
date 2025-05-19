@@ -1,4 +1,4 @@
-// Updated src/pages/MatchingTestPage.jsx
+// Improved src/pages/MatchingTestPage.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -14,7 +14,7 @@ import {
   CircularProgress,
   Container,
 } from "@mui/material";
-import { FiChevronLeft, FiCheck, FiX } from "react-icons/fi";
+import { FiChevronLeft, FiCheck, FiX, FiArrowRight } from "react-icons/fi";
 import axios from "../services/api";
 import toast from "react-hot-toast";
 
@@ -237,7 +237,7 @@ const MatchingTestPage = () => {
                       color="primary"
                       variant="outlined"
                     />
-                    <span className="mx-2">→</span>
+                    <FiArrowRight className="mx-2 text-gray-600" />
                     <Chip
                       label={pair.right.text}
                       color="secondary"
@@ -266,66 +266,65 @@ const MatchingTestPage = () => {
       {!submitted && (
         <Card>
           <CardContent>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <Typography
-                  variant="h6"
-                  className="font-semibold mb-3 text-center"
-                >
-                  Savol va Javoblar
-                </Typography>
-                <Divider className="mb-4" />
-              </Grid>
+            <Typography variant="h6" className="font-semibold mb-4 text-center">
+              Savol va Javoblar
+            </Typography>
+            <Divider className="mb-4" />
 
-              {/* Matching area */}
-              <Grid item xs={6}>
-                <Typography
-                  variant="subtitle1"
-                  className="mb-3 font-semibold text-center"
-                >
-                  Javoblar
-                </Typography>
-                <div className="space-y-2">
-                  {leftItems.map((item, index) => (
-                    <Paper
-                      key={index}
-                      className={`p-3 cursor-pointer transition-all ${
-                        selectedLeft?.text === item.text
-                          ? "bg-blue-100 border border-blue-500 shadow-md"
-                          : "hover:bg-gray-50 hover:shadow"
-                      }`}
-                      onClick={() => handleLeftClick(item)}
-                    >
-                      {item.text}
-                    </Paper>
-                  ))}
-                </div>
-              </Grid>
+            {/* Matching area - single card view */}
+            <Box className="p-4 bg-gray-50 rounded-lg">
+              <Grid container spacing={4}>
+                {/* Left column (Answers) */}
+                <Grid item xs={12} md={6}>
+                  <Typography
+                    variant="subtitle1"
+                    className="mb-3 font-semibold text-center"
+                  >
+                    Javoblar
+                  </Typography>
+                  <div className="space-y-2">
+                    {leftItems.map((item, index) => (
+                      <Paper
+                        key={index}
+                        className={`p-3 cursor-pointer transition-all ${
+                          selectedLeft?.text === item.text
+                            ? "bg-blue-100 border-2 border-blue-500 shadow-md"
+                            : "hover:bg-gray-100 hover:shadow"
+                        }`}
+                        onClick={() => handleLeftClick(item)}
+                      >
+                        <Typography>{item.text}</Typography>
+                      </Paper>
+                    ))}
+                  </div>
+                </Grid>
 
-              <Grid item xs={6}>
-                <Typography
-                  variant="subtitle1"
-                  className="mb-3 font-semibold text-center"
-                >
-                  Savollar
-                </Typography>
-                <div className="space-y-2">
-                  {rightItems.map((item, index) => (
-                    <Paper
-                      key={index}
-                      className={`p-3 cursor-pointer transition-all ${
-                        selectedLeft
-                          ? "hover:bg-green-50 hover:border-green-500 hover:border hover:shadow"
-                          : "hover:bg-gray-50 hover:shadow"
-                      }`}
-                      onClick={() => handleRightClick(item)}
-                    >
-                      {item.text}
-                    </Paper>
-                  ))}
-                </div>
+                {/* Right column (Questions) */}
+                <Grid item xs={12} md={6}>
+                  <Typography
+                    variant="subtitle1"
+                    className="mb-3 font-semibold text-center"
+                  >
+                    Savollar
+                  </Typography>
+                  <div className="space-y-2">
+                    {rightItems.map((item, index) => (
+                      <Paper
+                        key={index}
+                        className={`p-3 cursor-pointer transition-all ${
+                          selectedLeft
+                            ? "hover:bg-green-50 hover:border-green-500 hover:border hover:shadow"
+                            : "hover:bg-gray-100 hover:shadow"
+                        }`}
+                        onClick={() => handleRightClick(item)}
+                      >
+                        <Typography>{item.text}</Typography>
+                      </Paper>
+                    ))}
+                  </div>
+                </Grid>
               </Grid>
-            </Grid>
+            </Box>
           </CardContent>
         </Card>
       )}

@@ -1,32 +1,70 @@
+// Updated src/pages/aiChat.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { FiSend } from "react-icons/fi";
 import { AiChatLogo } from "../assets";
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm"; // GFM markdown qo'llab-quvvatlash uchun
+import remarkGfm from "remark-gfm";
+import axios from "../services/api";
 
 const AiChat = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [typingMessage, setTypingMessage] = useState("");
+  const [fetchingHistory, setFetchingHistory] = useState(true);
   const messagesEndRef = useRef(null);
 
+  // Fetch chat history
+  useEffect(() => {
+    const fetchChatHistory = async () => {
+      try {
+        setFetchingHistory(true);
+        const response = await axios.get("/api/chat/history");
+        if (response.data && response.data.status === "success") {
+          setMessages(response.data.data || []);
+        }
+      } catch (error) {
+        console.error("Chat history fetch error:", error);
+      } finally {
+        setFetchingHistory(false);
+      }
+    };
+
+    fetchChatHistory();
+  }, []);
+
+  // Auto-scroll to the bottom of messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typingMessage]);
 
+  // Animated typing effect for AI responses
   const typeMessage = (fullText) => {
     let index = 0;
     setTypingMessage("");
     const interval = setInterval(() => {
       setTypingMessage((prev) => prev + fullText[index - 1]);
       index++;
-      if (index >= fullText.length) {
+      if (index > fullText.length) {
         clearInterval(interval);
         setMessages((prev) => [...prev, { text: fullText, isUser: false }]);
         setTypingMessage("");
+        // Save message to history
+        saveChatMessage(fullText, false);
       }
-    }, 1); // yozilish tezligi
+    }, 1); // typing speed
+  };
+
+  // Save message to history in database
+  const saveChatMessage = async (text, isUser) => {
+    try {
+      await axios.post("/api/chat/message", {
+        text,
+        isUser,
+      });
+    } catch (error) {
+      console.error("Error saving chat message:", error);
+    }
   };
 
   const handleSendMessage = async () => {
@@ -34,54 +72,26 @@ const AiChat = () => {
 
     const userMessage = { text: input, isUser: true };
     setMessages((prev) => [...prev, userMessage]);
+
+    // Save user message to history
+    await saveChatMessage(input, true);
+
     setInput("");
     setLoading(true);
 
     try {
-      const response = await fetch(
-        "https://api.openai.com/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization:
-              "Bearer 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",
-          },
-          body: JSON.stringify({
-            model: "gpt-4.1-nano",
-            messages: [
-              {
-                role: "system",
-                content:
-                  "Iltimos, faqat o‘zbek tilida javob ber. Hech qachon boshqa tillardan foydalanma.",
-              },
-              {
-                role: "user",
-                content: input,
-              },
-            ],
-          }),
-        }
-      );
+      const response = await axios.post("/api/chat/ai-response", {
+        message: input,
+      });
 
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
+      if (response.data && response.data.status === "success") {
+        typeMessage(response.data.response);
+      } else {
+        typeMessage("Uzr, javob topilmadi. Iltimos, qaytadan urinib ko'ring.");
       }
-
-      const data = await response.json();
-      const aiText =
-        data.choices?.[0]?.message?.content || "Uzr, javob topilmadi.";
-
-      typeMessage(aiText);
     } catch (error) {
-      console.error("API xatosi:", error);
-      setMessages((prev) => [
-        ...prev,
-        {
-          text: "Xatolik yuz berdi. Iltimos, API kalitingizni tekshiring yoki keyinroq urinib ko'ring.",
-          isUser: false,
-        },
-      ]);
+      console.error("AI service error:", error);
+      typeMessage("Xatolik yuz berdi. Iltimos, keyinroq urinib ko'ring.");
     } finally {
       setLoading(false);
     }
@@ -96,8 +106,14 @@ const AiChat = () => {
   return (
     <div className="relative w-[80%] mx-auto h-[80vh]">
       {/* Chat messages container */}
-      <div className="h-[90%] overflow-y-auto pb-4">
-        {messages.length === 0 && !typingMessage ? (
+      <div className="h-[90%] overflow-y-auto pb-4 pr-2 pl-2">
+        {fetchingHistory ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="animate-pulse text-gray-500">
+              Xabarlar yuklanmoqda...
+            </div>
+          </div>
+        ) : messages.length === 0 && !typingMessage ? (
           <div className="w-full h-full flex items-center justify-center">
             <img
               src={AiChatLogo}
@@ -121,8 +137,7 @@ const AiChat = () => {
                       : "bg-gray-100 text-gray-800"
                   }`}
                 >
-                  <ReactMarkdown // GFM qo'llanadi
-                  >
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {msg.text}
                   </ReactMarkdown>
                 </div>
@@ -131,7 +146,9 @@ const AiChat = () => {
             {typingMessage && (
               <div className="flex justify-start">
                 <div className="max-w-[80%] p-3 rounded-lg bg-gray-100 text-gray-800">
-                  <ReactMarkdown>{typingMessage}</ReactMarkdown>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {typingMessage}
+                  </ReactMarkdown>
                 </div>
               </div>
             )}
@@ -149,12 +166,16 @@ const AiChat = () => {
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder="Yozing..."
-          disabled={loading}
+          disabled={loading || fetchingHistory}
         />
         <button
-          className="w-[5%] flex items-center justify-center bg-blue-500 text-white hover:bg-blue-600 disabled:bg-blue-300"
+          className={`w-[5%] flex items-center justify-center text-white ${
+            loading || !input.trim() || fetchingHistory
+              ? "bg-blue-300 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600"
+          }`}
           onClick={handleSendMessage}
-          disabled={loading || !input.trim()}
+          disabled={loading || !input.trim() || fetchingHistory}
         >
           <FiSend size={20} />
         </button>
