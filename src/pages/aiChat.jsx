@@ -48,7 +48,7 @@ const AiChat = () => {
               "Bearer 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",
           },
           body: JSON.stringify({
-            model: "gpt-3.5-turbo",
+            model: "gpt-4.1-nano",
             messages: [
               {
                 role: "system",
