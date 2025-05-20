@@ -272,7 +272,7 @@ const MatchingTestPage = () => {
             <Divider className="mb-4" />
 
             {/* Matching area - single card view */}
-            <Box className="p-4 bg-gray-50 rounded-lg">
+            <Box className="p-4 w-100 flex justify-center  bg-gray-50 rounded-lg">
               <Grid container spacing={4}>
                 {/* Left column (Answers) */}
                 <Grid item xs={12} md={6}>
@@ -286,7 +286,7 @@ const MatchingTestPage = () => {
                     {leftItems.map((item, index) => (
                       <Paper
                         key={index}
-                        className={`p-3 cursor-pointer transition-all ${
+                        className={`p-3 min-w-[200px] cursor-pointer transition-all ${
                           selectedLeft?.text === item.text
                             ? "bg-blue-100 border-2 border-blue-500 shadow-md"
                             : "hover:bg-gray-100 hover:shadow"
@@ -311,7 +311,7 @@ const MatchingTestPage = () => {
                     {rightItems.map((item, index) => (
                       <Paper
                         key={index}
-                        className={`p-3 cursor-pointer transition-all ${
+                        className={`p-3 cursor-pointer min-w-[200px] transition-all ${
                           selectedLeft
                             ? "hover:bg-green-50 hover:border-green-500 hover:border hover:shadow"
                             : "hover:bg-gray-100 hover:shadow"
