@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { convertToHttps } from "../utils";
 import FileUploadProgress from "./FileUploadProgress";
 import { CircularProgress } from "@mui/material";
+import { uploadVideoWork, validateFile } from "../utils/uploadHelpers";
 
 const FileUploader = ({ videoId }) => {
   const [files, setFiles] = useState([]);
@@ -38,55 +39,27 @@ const FileUploader = ({ videoId }) => {
     }
 
     setIsLoading(true);
-
-    // Initialize progress tracking for each file
-    const initialProgress = {};
-    files.forEach((file) => {
-      initialProgress[file.name] = 0;
-    });
-    setUploadProgress(initialProgress);
-
     const formData = new FormData();
 
-    // Fayllarni qo'shish
     files.forEach((file) => {
       formData.append("files", file);
     });
-
-    // Kerakli id-lar
     formData.append("videoId", videoId);
 
     try {
-      const { data } = await axios.post("/api/videoWork/", formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("ziyo-jwt")}`,
-          "Content-Type": "multipart/form-data",
-        },
-        onUploadProgress: (progressEvent) => {
-          const totalPercentage = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-
-          // Update progress for all files proportionally
-          const updatedProgress = {};
-          files.forEach((file) => {
-            updatedProgress[file.name] = totalPercentage;
-          });
-          setUploadProgress(updatedProgress);
-        },
+      const result = await uploadVideoWork(formData, (progress) => {
+        const updatedProgress = {};
+        files.forEach((file) => {
+          updatedProgress[file.name] = progress;
+        });
+        setUploadProgress(updatedProgress);
       });
 
-      if (data.status === "success") {
-        toast.success("Fayllar muvaffaqiyatli yuborildi!");
-        setFiles([]);
-        fetchWork();
-      } else {
-        console.error("Xatolik:", data.error);
-        toast.error("Yuborishda xatolik yuz berdi.");
-      }
+      toast.success("Fayllar muvaffaqiyatli yuborildi!");
+      setFiles([]);
+      fetchWork();
     } catch (err) {
-      console.error("Tarmoq xatolik:", err.message);
-      toast.error("Serverga ulanishda xatolik yuz berdi.");
+      // Error handling uploadHelpers da
     } finally {
       setIsLoading(false);
       setUploadProgress({});
