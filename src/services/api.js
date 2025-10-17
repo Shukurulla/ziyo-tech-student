@@ -1,16 +1,15 @@
 import axios from "axios";
 
-// Production uchun to'g'ri URL
-const API_BASE_URL = "/api";
+// Base URL sozlash
+const API_BASE_URL = "https://server.ziyo-tech.uz";
 
 // Axios instance yaratish
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 120000, // 2 minutes
-  withCredentials: false, // Vercel uchun false qilish
+  timeout: 120000, // 2 minutes timeout for large file uploads
 });
 
-// Request interceptor
+// Request interceptor - har bir so'rovga token qo'shish
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("ziyo-jwt");
@@ -19,23 +18,25 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    // CORS headers
+    // Basic headers
     config.headers["Accept"] = "application/json";
-    config.headers["Content-Type"] =
-      config.data instanceof FormData
-        ? "multipart/form-data"
-        : "application/json";
+
+    // Content-Type ni faqat JSON uchun o'rnatish
+    // FormData uchun Content-Type avtomatik o'rnatiladi
+    if (config.data && !(config.data instanceof FormData)) {
+      config.headers["Content-Type"] = "application/json";
+    }
 
     console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`);
     return config;
   },
   (error) => {
-    console.error("Request error:", error);
+    console.error("Request interceptor error:", error);
     return Promise.reject(error);
   }
 );
 
-// Response interceptor
+// Response interceptor - xatoliklarni boshqarish
 api.interceptors.response.use(
   (response) => {
     console.log(`API Response: ${response.status} ${response.config.url}`);
@@ -44,12 +45,22 @@ api.interceptors.response.use(
   (error) => {
     console.error("API Error:", error);
 
+    // Network xatolari
     if (error.code === "ERR_NETWORK") {
-      console.error("Network Error - possible CORS or server issue");
+      console.error("Network Error");
+      error.message = "Tarmoq xatosi. Server bilan aloqa o'rnatilmadi.";
     }
 
+    // Timeout xatolari
+    if (error.code === "ECONNABORTED") {
+      error.message = "So'rov vaqti tugadi. Qaytadan urinib ko'ring.";
+    }
+
+    // Token xatolari
     if (error.response?.status === 401) {
+      console.warn("Unauthorized - Token invalid or expired");
       localStorage.removeItem("ziyo-jwt");
+      // Redirect to login if needed
       if (window.location.pathname !== "/auth/login") {
         window.location.href = "/auth/login";
       }
@@ -59,11 +70,11 @@ api.interceptors.response.use(
   }
 );
 
-// Backward compatibility
+// Axios defaultlarini o'rnatish backward compatibility uchun
 axios.defaults.baseURL = API_BASE_URL;
 axios.defaults.timeout = 120000;
-axios.defaults.withCredentials = false;
 
+// Request interceptor ham default axios uchun
 axios.interceptors.request.use((config) => {
   const token = localStorage.getItem("ziyo-jwt");
   if (token) {
@@ -72,4 +83,35 @@ axios.interceptors.request.use((config) => {
   return config;
 });
 
+// Professional file upload function
+export const uploadWithProgress = (url, formData, onProgress = null) => {
+  return api.post(url, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+    onUploadProgress: (progressEvent) => {
+      if (onProgress && progressEvent.total) {
+        const percentCompleted = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total
+        );
+        onProgress(percentCompleted);
+      }
+    },
+    timeout: 300000, // 5 minutes for large file uploads
+  });
+};
+
+// Health check function
+export const checkServerHealth = async () => {
+  try {
+    const response = await api.get("/health");
+    return response.data;
+  } catch (error) {
+    console.error("Server health check failed:", error);
+    throw error;
+  }
+};
+
+// Export both api instance and default axios for backward compatibility
+export { api };
 export default axios;

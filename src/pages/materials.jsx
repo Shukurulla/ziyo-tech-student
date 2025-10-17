@@ -19,6 +19,7 @@ import {
   FaDownload,
 } from "react-icons/fa";
 import { convertToHttps } from "../utils";
+import { handleDownload } from "../utils/download";
 
 const Materials = () => {
   const [materials, setMaterials] = useState([]);
@@ -131,8 +132,15 @@ const Materials = () => {
                   }
                   className="mt-auto"
                   color={item.content === "link" ? "secondary" : "primary"}
-                  href={convertToHttps(item.fileUrl)}
-                  target="_blank"
+                  onClick={() => {
+                    if (item.content === "link") {
+                      // Agar bu link bo‘lsa, yangi oynada ochamiz
+                      window.open(item.fileUrl, "_blank");
+                    } else {
+                      // Aks holda yuklab olamiz
+                      handleDownload(item.fileUrl);
+                    }
+                  }}
                 >
                   {item.content === "link" ? "Havolani ochish" : "Yuklab olish"}
                 </Button>

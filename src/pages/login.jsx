@@ -20,7 +20,7 @@ const Login = () => {
     );
   };
   return (
-    <div>
+    <div className="w-100 h-[100vh] overflow-y-scroll">
       <header className="py-4 px-4 container">
         <img src={Logo} alt="" />
       </header>
