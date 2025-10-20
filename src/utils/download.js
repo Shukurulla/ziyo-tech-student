@@ -1,8 +1,15 @@
 const handleDownload = async (url) => {
   try {
-    const response = await fetch(
-      url.replace("http://teacher.ziyo-tech.uz/api", "https://ziyo-tech.uz/api")
-    );
+    // Convert any old domain URLs to server.ziyo-tech.uz
+    let correctedUrl = url;
+    if (url.includes("ziyo-tech.uz")) {
+      correctedUrl = url.replace(
+        /https?:\/\/[^\/]*ziyo-tech\.uz/,
+        "https://server.ziyo-tech.uz"
+      );
+    }
+
+    const response = await fetch(correctedUrl);
     const blob = await response.blob();
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
