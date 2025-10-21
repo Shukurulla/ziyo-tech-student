@@ -16,12 +16,9 @@ import StudentNotifications from "./pages/notification";
 import EditProfile from "./pages/settings";
 import StudentTestSelection from "./pages/StudentTestSelection";
 import MatchingTestPage from "./pages/MatchingTestPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (!localStorage.getItem("ziyo-jwt")) navigate("/auth/login");
-  }, []);
   return (
     <div>
       <Toaster />
@@ -30,67 +27,113 @@ const App = () => {
         <Route path="/auth/login" element={<Login />} />
         <Route
           path="/"
-          element={<Layout active={"Bosh Sahifa"} activePage={<Dashboard />} />}
+          element={
+            <ProtectedRoute>
+              <Layout active={"Bosh Sahifa"} activePage={<Dashboard />} />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/practicum-tests"
           element={
-            <Layout active={"Praktik testlar"} activePage={<PracticTests />} />
+            <ProtectedRoute>
+              <Layout
+                active={"Praktik testlar"}
+                activePage={<PracticTests />}
+              />
+            </ProtectedRoute>
           }
         />
         <Route
           path="/ai-chat"
-          element={<Layout active={"AI Chat"} activePage={<AiChat />} />}
+          element={
+            <ProtectedRoute>
+              <Layout active={"AI Chat"} activePage={<AiChat />} />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/materials"
           element={
-            <Layout active={"Materiyallar"} activePage={<Materials />} />
+            <ProtectedRoute>
+              <Layout active={"Materiyallar"} activePage={<Materials />} />
+            </ProtectedRoute>
           }
         />
         <Route
           path="/glossary"
-          element={<Layout active={"Glossary"} activePage={<GlossaryPage />} />}
+          element={
+            <ProtectedRoute>
+              <Layout active={"Glossary"} activePage={<GlossaryPage />} />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/settings"
           element={
-            <Layout active={"Sozlamalar"} activePage={<EditProfile />} />
+            <ProtectedRoute>
+              <Layout active={"Sozlamalar"} activePage={<EditProfile />} />
+            </ProtectedRoute>
           }
         />
         <Route
           path="/video/:id"
-          element={<Layout active={"Bosh Sahifa"} activePage={<Video />} />}
+          element={
+            <ProtectedRoute>
+              <Layout active={"Bosh Sahifa"} activePage={<Video />} />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/video/:videoId/test"
-          element={<Layout active={"Bosh Sahifa"} activePage={<TestPage />} />}
+          element={
+            <ProtectedRoute>
+              <Layout active={"Bosh Sahifa"} activePage={<TestPage />} />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/practicum-test/:testId"
           element={
-            <Layout active={"Praktik testlar"} activePage={<PracticeTest />} />
+            <ProtectedRoute>
+              <Layout
+                active={"Praktik testlar"}
+                activePage={<PracticeTest />}
+              />
+            </ProtectedRoute>
           }
         />
         <Route
           path="/notification"
           element={
-            <Layout active={"Xabarlar"} activePage={<StudentNotifications />} />
+            <ProtectedRoute>
+              <Layout
+                active={"Xabarlar"}
+                activePage={<StudentNotifications />}
+              />
+            </ProtectedRoute>
           }
         />
         <Route
           path="/video/:videoId/test-selection"
           element={
-            <Layout
-              active={"Bosh Sahifa"}
-              activePage={<StudentTestSelection />}
-            />
+            <ProtectedRoute>
+              <Layout
+                active={"Bosh Sahifa"}
+                activePage={<StudentTestSelection />}
+              />
+            </ProtectedRoute>
           }
         />
         <Route
           path="/video/:videoId/matching-test"
           element={
-            <Layout active={"Bosh Sahifa"} activePage={<MatchingTestPage />} />
+            <ProtectedRoute>
+              <Layout
+                active={"Bosh Sahifa"}
+                activePage={<MatchingTestPage />}
+              />
+            </ProtectedRoute>
           }
         />
       </Routes>

@@ -42,16 +42,17 @@ const UserService = {
   async profile(dispatch) {
     dispatch(getUserStart());
     try {
-      const { data } = await axios.get("/api/student/profile", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("ziyo-token")}`,
-        },
-      });
+      const { data } = await axios.get("/api/student/profile");
       dispatch(getUserSuccess(data.data));
       return data.data;
     } catch (error) {
       console.log(error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem("ziyo-jwt");
+        window.location.href = "/auth/login";
+      }
       dispatch(getUserFailure());
+      throw error;
     }
   },
 };

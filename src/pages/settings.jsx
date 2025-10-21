@@ -30,10 +30,11 @@ export default function EditProfile() {
         setUser(data);
       } catch (err) {
         console.error("Ma'lumot yuklanmadi", err);
+        setLoading(false);
       }
     };
     fetchStudent();
-  }, [user._id]);
+  }, []);
 
   // Formni boshqarish
   const handleChange = (e) => {

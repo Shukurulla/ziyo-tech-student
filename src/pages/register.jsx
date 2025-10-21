@@ -131,7 +131,7 @@ const Register = () => {
 
   // Registration Form Page
   return (
-    <div>
+    <div className="w-full h-[100vh] overflow-y-scroll">
       <header className="py-4 px-4 container">
         <img src={Logo} alt="" />
       </header>
@@ -181,7 +181,7 @@ const Register = () => {
 
               <div className="mb-4">
                 <label className="text-gray-400 text-sm mb-2 block">
-                  Qaysi maktab*
+                  Oqish joyingiz*
                 </label>
                 <input
                   type="text"

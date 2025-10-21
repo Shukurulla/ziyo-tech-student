@@ -5,8 +5,32 @@ const GlossaryPage = () => {
   const contentRef = useRef(null);
   const [highlightedContent, setHighlightedContent] = useState("");
 
-  const originalContent = `
-## Microsoft Word
+  const [glossaryData, setGlossaryData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchGlossary = async () => {
+      try {
+        const res = await fetch("https://server.ziyo-tech.uz/api/glossary");
+        const data = await res.json();
+        if (data.status === "success") {
+          setGlossaryData(data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching glossary:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchGlossary();
+  }, []);
+
+  const originalContent =
+    glossaryData.length > 0
+      ? glossaryData
+          .map((entry) => `## ${entry.title}\n\n${entry.content}`)
+          .join("\n\n")
+      : `## Microsoft Word
 
 Microsoft Word (qisgacha MS Word, WinWord yoki Word) – matnii ma'lumotlarni yaratish, kofrish va tahrir qilish uchun mo'jjallangan matn muhariridir yoki matn prosessori. Microsoft kompaniyasi tomonidan Microsoft Office paketi tarkibida chiqariladi. Ilk versiyasi Richard Brodi tomonidan 1983-yil IBM PC uchun yozilgan. Keyinroq Apple Macintosh (1984), SCO UNIX va Microsoft Windows (1989) uchun ishlab chiqilgan. Amaldagi versiyasi Windows va MacOS uchun mo'jjallangan Microsoft Office Word 2016 hisoblanadi.
 
@@ -14,8 +38,12 @@ Microsoft Word (qisgacha MS Word, WinWord yoki Word) – matnii ma'lumotlarni ya
 
 Microsoft Word yaratilishida "Xerox PARC" tadqiqot markazi tomonidan ishlab chiqilgan Bravo - original grafik interfeysga ega matn prosessori katta o'rin tutadi. Bravo asoschisi Chantz Simoni PARCni 1981-yil tark etgan. Wordning MS-DOS uchun taqdimoti 1983-yil oxirida bo'lib o'tdi. Bu tovar bozorda yomon qabul qilindi.
 
-Biroq 1985-yil Macintosh uchun mo'jjallangan versiyasi qo'lma-qo'l bo'lib keng tarqala boshladi. Ikki yildan so'ng Macintosh uchun Word 3.01 versiyasi ishlab chiqildi. Macintosh uchun mo'jjallangan boshqa dasturiy ta'minotlar kabi Word ham to'liq WYSIWYG-muharrir edi ("what you see is what you get" tamoyili - "nima ko'rsam, shuni olaman"). MS-DOS grafik qobiqdan mahrum matn operatsion tizimi bo'lsada, DOS uchun mo'jjalangan Word dasturi IBM PC ning tahrir vaqtida yarim qora yoki oq matn kabi matn belgilarini ko'rsata oluvchi matn prosessori edi. Biroq u ham to'liq WYSIWYG-muharrir edi. WordStar va WordPerfect kabi matn muharrirlari odatda matn ekranini belgi kodlari bilan ishlatishar edi, ba'zan matn rangli ham bo'lardi. Ammo ko'p holda DOS dasturiy ta'minotidagi dasturlarda har bir buyruq uchun shaxsiy klavish kombinatsiyalari qo'llanishi (DOS Wordda hujjat saqlashda ESC-T-S kombinatsiyasi ishlatilgan) va ko'p kotiblar faqat WordPerfectni ishlata olishi shu dasturni ishlatuvchi kompaniyalar ozroq ustunlikka ega yangi dasturga juda sekinlik bilan o'tishgan.
-`;
+Biroq 1985-yil Macintosh uchun mo'jjallangan versiyasi qo'lma-qo'l bo'lib keng tarqala boshladi. Ikki yildan so'ng Macintosh uchun Word 3.01 versiyasi ishlab chiqildi. Macintosh uchun mo'jjallangan boshqa dasturiy ta'minotlar kabi Word ham to'liq WYSIWYG-muharrir edi ("what you see is what you get" tamoyili - "nima ko'rsam, shuni olaman"). MS-DOS grafik qobiqdan mahrum matn operatsion tizimi bo'lsada, DOS uchun mo'jjalangan Word dasturi IBM PC ning tahrir vaqtida yarim qora yoki oq matn kabi matn belgilarini ko'rsata oluvchi matn prosessori edi. Biroq u ham to'liq WYSIWYG-muharrir edi. WordStar va WordPerfect kabi matn muharrirlari odatda matn ekranini belgi kodlari bilan ishlatishar edi, ba'zan matn rangli ham bo'lardi. Ammo ko'p holda DOS dasturiy ta'minotidagi dasturlarda har bir buyruq uchun shaxsiy klavish kombinatsiyalari qo'llanishi (DOS Wordda hujjat saqlashda ESC-T-S kombinatsiyasi ishlatilgan) va ko'p kotiblar faqat WordPerfectni ishlata olishi shu dasturni ishlatuvchi kompaniyalar ozroq ustunlikka ega yangi dasturga juda sekinlik bilan o'tishgan.`;
+
+  // Force re-render when glossaryData changes
+  useEffect(() => {
+    setHighlightedContent(originalContent);
+  }, [glossaryData, originalContent]);
 
   useEffect(() => {
     if (!searchTerm.trim()) {
