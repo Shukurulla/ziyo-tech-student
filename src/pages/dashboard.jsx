@@ -60,12 +60,21 @@ const Dashboard = () => {
               } mb-4`}
             >
               <div className="relative video-image rounded-lg overflow-hidden h-[180px] bg-gray-100">
-                <img
-                  src={item.video?.thumbnail}
-                  loading="eager"
-                  alt="Thumbnail"
-                  className="w-full h-full object-cover"
-                />
+                {item.video?.thumbnail && !item.video?.thumbnail.endsWith('.mp4') ? (
+                  <img
+                    src={item.video.thumbnail}
+                    loading="eager"
+                    alt="Thumbnail"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
+                    <FiVideo size={48} className="text-blue-400" />
+                  </div>
+                )}
                 {/* Play Icon Centered */}
                 <div className="absolute inset-0 flex items-center justify-center bg-[#1111] bg-opacity-40 hover:bg-opacity-50 transition">
                   <div className="w-14 flex items-center justify-center bg-white rounded-full h-14">
